@@ -62,7 +62,7 @@ export default function Login() {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-green-50 px-4">
-      <div className="bg-blue-100 shadow-lg rounded-lg p-8 w-full max-w-sm text-center">
+      <div className="bg-blue-100 shadow-lg rounded-lg p-6 sm:p-8 w-full max-w-sm text-center">
         <div className="flex justify-center items-center gap-2 mb-4">
           <div className="w-10 h-10 relative">
             <Image
@@ -79,16 +79,16 @@ export default function Login() {
             <span style={{ fontFamily: "'Playfair Display', serif" }} className="tracking-widest">GERCAB</span>
           </h2>
         </div>
-
+  
         {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-
+  
         <form onSubmit={handleSubmit} className="grid gap-4 text-left">
           <input
             name="nama"
             type="text"
             value={form.nama}
             onChange={handleChange}
-            className="border p-2 rounded"
+            className="border p-2 rounded text-sm"
             placeholder="Nama Lengkap"
             required
           />
@@ -97,7 +97,7 @@ export default function Login() {
             type="email"
             value={form.username}
             onChange={handleChange}
-            className="border p-2 rounded"
+            className="border p-2 rounded text-sm"
             placeholder="Email"
             required
           />
@@ -107,7 +107,7 @@ export default function Login() {
               type={showPassword ? "text" : "password"}
               value={form.password}
               onChange={handleChange}
-              className="border p-2 rounded w-full"
+              className="border p-2 rounded w-full text-sm"
               placeholder="Password"
               required
             />
@@ -119,15 +119,15 @@ export default function Login() {
               {showPassword ? "🙈" : "👁️"}
             </button>
           </div>
-          <button type="submit" className="bg-green-600 text-white py-2 rounded hover:bg-green-700 transition">
+          <button type="submit" className="bg-green-600 text-white py-2 rounded hover:bg-green-700 transition text-sm">
             Login
           </button>
         </form>
       </div>
-
+  
       <p className="absolute bottom-2 left-2 text-xs italic text-gray-500">
         Aplikasi ini dibuat oleh <strong>@Mr.Tri25</strong>
       </p>
     </div>
   );
-}
+  }

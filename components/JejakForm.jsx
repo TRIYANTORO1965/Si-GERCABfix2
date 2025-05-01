@@ -1,4 +1,3 @@
-
 "use client";
 import React, { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
@@ -151,36 +150,35 @@ export default function JejakForm() {
   const totalPoin = data.reduce((t, d) => t + (d.poin || 0), 0);
 
   return (
-      <div className="bg-white p-6 rounded-lg shadow-md">
-      
+    <div className="bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto">
       <form className="grid gap-4" onSubmit={handleSubmit}>
-        <input name="nama" placeholder="Nama" value={form.nama} onChange={handleChange} className="border rounded" required />
-        <input name="kelas" placeholder="Kelas" value={form.kelas} onChange={handleChange} className="border rounded" required />
-        <select name="kategori" value={form.kategori} onChange={handleChange} className="border rounded" required>
+        <input name="nama" placeholder="Nama" value={form.nama} onChange={handleChange} className="border rounded p-2" required />
+        <input name="kelas" placeholder="Kelas" value={form.kelas} onChange={handleChange} className="border rounded p-2" required />
+        <select name="kategori" value={form.kategori} onChange={handleChange} className="border rounded p-2" required>
           <option value="">Pilih Kategori</option>
           {Object.keys(aksiData).map((kat) => (
             <option key={kat} value={kat}>{kat}</option>
           ))}
         </select>
         {form.kategori && (
-          <select name="aksi" value={form.aksi} onChange={handleChange} className="border rounded" required>
+          <select name="aksi" value={form.aksi} onChange={handleChange} className="border rounded p-2" required>
             <option value="">Pilih Aksi</option>
             {aksiData[form.kategori].map((a) => (
               <option key={a.aksi} value={a.aksi}>{a.aksi}</option>
             ))}
           </select>
         )}
-        <input name="poin" type="number" value={form.poin} readOnly className="border rounded " placeholder="Poin" />
-        <input name="lokasi" value={form.lokasi} onChange={handleChange} className="border rounded" placeholder="Lokasi" required />
-        <input type="date" name="tanggal" value={form.tanggal} onChange={handleChange} className="border rounded" />
-        <input type="file" accept="image/*,video/*" onChange={handleFileChange} className="" />
+        <input name="poin" type="number" value={form.poin} readOnly className="border rounded p-2" placeholder="Poin" />
+        <input name="lokasi" value={form.lokasi} onChange={handleChange} className="border rounded p-2" placeholder="Lokasi" required />
+        <input type="date" name="tanggal" value={form.tanggal} onChange={handleChange} className="border rounded p-2" />
+        <input type="file" accept="image/*,video/*" onChange={handleFileChange} />
         <button type="submit" className="bg-green-600 text-white py-2 rounded hover:bg-pink-700 transition">Simpan Jejak</button>
       </form>
-      <div className="flex gap-4 justify-center">
+      <div className="flex gap-4 justify-center mt-4">
         <button onClick={exportExcel} className="bg-yellow-500 text-white px-4 py-2 rounded">Export ke Excel</button>
         <button onClick={exportPDF} className="bg-red-500 text-white px-4 py-2 rounded">Export ke PDF</button>
       </div>
-      <p className="text-center text-sm">Total Poin: <strong className="text-green-700">{totalPoin}</strong></p>
+      <p className="text-center text-sm mt-2">Total Poin: <strong className="text-green-700">{totalPoin}</strong></p>
       {data.length > 0 && (
         <div className="mt-8 space-y-8">
           <div>

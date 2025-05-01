@@ -1,0 +1,23 @@
+{
+    "name": "SiGERCAB",
+    "short_name": "GERCAB",
+    "description": "Sistem Informasi Gerakan Cerdas Beraksi",
+    "icons": [
+      {
+        "src": "/icons/icon-192x192.png",
+        "type": "image/png",
+        "sizes": "192x192"
+      },
+      {
+        "src": "/icons/icon-512x512.png",
+        "type": "image/png",
+        "sizes": "512x512"
+      }
+    ],
+    "start_url": "/",
+    "background_color": "#ffffff",
+    "display": "standalone",
+    "scope": "/",
+    "theme_color": "#16a34a"
+  }
+  

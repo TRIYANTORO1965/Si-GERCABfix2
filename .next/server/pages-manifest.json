@@ -2,8 +2,7 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/": "pages/index.js",
-  "/login": "pages/login.js",
-  "/galeri": "pages/galeri.js",
-  "/agenda": "pages/agenda.js"
+  "/budaya": "pages/budaya.js",
+  "/jejak": "pages/jejak.js",
+  "/lapor": "pages/lapor.js"
 }
