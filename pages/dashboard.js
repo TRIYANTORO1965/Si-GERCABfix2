@@ -39,7 +39,7 @@ export default function Dashboard() {
 
     const semuaData = [...jejak, ...budaya, ...laporan, ...galeriData].map(item => ({
       ...item,
-      kategori: item.kategori || "Laporan" // fallback
+      kategori: item.kategori || "Laporan"
     }));
 
     const rekapMap = {};
@@ -108,27 +108,24 @@ export default function Dashboard() {
 
   return (
     <MainLayout>
-      <div className="bg-white bg-opacity-70 backdrop-blur p-4 rounded shadow">
+      <div className="bg-white bg-opacity-70 backdrop-blur p-4 rounded shadow font-inter">
         <h2 className="text-xl font-semibold mb-4 text-indigo-700">Dashboard Rekap Semua Aksi Siswa</h2>
 
-        {/* Top 10 */}
         {rekap.length > 0 && (
           <div className="mb-6">
             <h3 className="text-lg font-semibold text-yellow-600 mb-2">🏆 Top 10 Siswa Berdasarkan Poin</h3>
-            <table className="w-full md:w-2/3 table-auto text-sm border bg-white shadow rounded overflow-hidden">
-              <thead className="bg-yellow-100">
-                <tr>
-                  <th className="px-3 py-2 border">#</th>
-                  <th className="px-3 py-2 border">Nama</th>
-                  <th className="px-3 py-2 border">Kelas</th>
-                  <th className="px-3 py-2 border text-center">Poin</th>
-                </tr>
-              </thead>
-              <tbody>
-                {rekap
-                  .sort((a, b) => b.totalPoin - a.totalPoin)
-                  .slice(0, 10)
-                  .map((item, idx) => (
+            <div className="overflow-x-auto">
+              <table className="w-full md:w-2/3 table-auto text-sm border bg-white shadow rounded">
+                <thead className="bg-yellow-100">
+                  <tr>
+                    <th className="px-3 py-2 border">#</th>
+                    <th className="px-3 py-2 border">Nama</th>
+                    <th className="px-3 py-2 border">Kelas</th>
+                    <th className="px-3 py-2 border text-center">Poin</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rekap.slice(0, 10).map((item, idx) => (
                     <tr key={idx} className="hover:bg-yellow-50">
                       <td className="px-3 py-2 border text-center font-semibold">{idx + 1}</td>
                       <td className="px-3 py-2 border">{item.nama}</td>
@@ -136,35 +133,21 @@ export default function Dashboard() {
                       <td className="px-3 py-2 border text-center">{item.totalPoin}</td>
                     </tr>
                   ))}
-              </tbody>
-            </table>
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
 
-        {/* Filter */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
-          <input
-            type="text"
-            placeholder="🔍 Cari nama siswa..."
-            className="border px-3 py-2 rounded"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <select
-            className="border px-3 py-2 rounded"
-            value={kelasFilter}
-            onChange={(e) => setKelasFilter(e.target.value)}
-          >
+          <input type="text" placeholder="🔍 Cari nama siswa..." className="border px-3 py-2 rounded w-full text-base" value={search} onChange={(e) => setSearch(e.target.value)} />
+          <select className="border px-3 py-2 rounded w-full text-base" value={kelasFilter} onChange={(e) => setKelasFilter(e.target.value)}>
             <option value="">🎓 Semua Kelas</option>
             {Array.from(new Set(rekap.map((r) => r.kelas))).map((kelas, i) => (
               <option key={i} value={kelas}>{kelas}</option>
             ))}
           </select>
-          <select
-            className="border px-3 py-2 rounded"
-            value={kategoriFilter}
-            onChange={(e) => setKategoriFilter(e.target.value)}
-          >
+          <select className="border px-3 py-2 rounded w-full text-base" value={kategoriFilter} onChange={(e) => setKategoriFilter(e.target.value)}>
             <option value="">🗂️ Semua Kategori</option>
             <option value="Jejak">Jejak</option>
             <option value="Budaya">Budaya</option>
@@ -173,100 +156,85 @@ export default function Dashboard() {
           </select>
         </div>
 
-        <div className="flex gap-4 mb-6 justify-center">
-          <button onClick={exportExcel} className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">
-            Export Excel
-          </button>
-          <button onClick={exportPDF} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
-            Export PDF
-          </button>
+        <div className="flex flex-col sm:flex-row gap-4 mb-6 justify-center items-center">
+          <button onClick={exportExcel} className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 w-full sm:w-auto">Export Excel</button>
+          <button onClick={exportPDF} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 w-full sm:w-auto">Export PDF</button>
         </div>
 
-        {/* Tabel utama + detail */}
-        <table className="w-full table-auto border text-sm shadow bg-white">
-          <thead className="bg-indigo-100 text-left">
-            <tr>
-              <th className="px-3 py-2 border"></th>
-              <th className="px-3 py-2 border">Nama</th>
-              <th className="px-3 py-2 border">Kelas</th>
-              <th className="px-3 py-2 border text-center">Jumlah Aksi</th>
-              <th className="px-3 py-2 border text-center">Total Poin</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredRekap.length > 0 ? (
-              filteredRekap.map((item) => {
-                const key = item.nama + "-" + item.kelas;
-                const detailAksi = detailData[key] || [];
-                const filteredDetail = kategoriFilter
-                  ? detailAksi.filter((a) => (a.kategori || "Laporan") === kategoriFilter)
-                  : detailAksi;
-
-                return (
-                  <React.Fragment key={key}>
-                    <tr className="hover:bg-indigo-50">
-                      <td className="px-3 py-2 border text-center">
-                        <button
-                          onClick={() => toggleExpand(key)}
-                          className={`px-3 py-1 rounded-full text-xs font-semibold transition duration-200 ${
-                            expanded === key
-                              ? "bg-red-100 text-red-600 hover:bg-red-200"
-                              : "bg-green-100 text-green-700 hover:bg-green-200"
-                          }`}
-                        >
-                          {expanded === key ? "⬇️" : "▶️"}
-                        </button>
-                      </td>
-                      <td className="px-3 py-2 border">{item.nama}</td>
-                      <td className="px-3 py-2 border">{item.kelas}</td>
-                      <td className="px-3 py-2 border text-center">{item.jumlahAksi}</td>
-                      <td className="px-3 py-2 border text-center">{item.totalPoin}</td>
-                    </tr>
-
-                    {expanded === key && (
-                      <tr>
-                        <td colSpan="5" className="bg-gray-100">
-                          <table className="w-full table-auto">
-                            <thead className="bg-gray-200">
-                              <tr>
-                                <th className="px-3 py-2 border">Tanggal</th>
-                                <th className="px-3 py-2 border">Kategori</th>
-                                <th className="px-3 py-2 border">Aksi</th>
-                                <th className="px-3 py-2 border">Poin</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {filteredDetail.length > 0 ? (
-                                filteredDetail.map((detail, index) => (
-                                  <tr key={index}>
-                                    <td className="px-3 py-2 border">{detail.tanggal}</td>
-                                    <td className="px-3 py-2 border">{detail.kategori}</td>
-                                    <td className="px-3 py-2 border">{detail.aksi}</td>
-                                    <td className="px-3 py-2 border">{detail.poin}</td>
-                                  </tr>
-                                ))
-                              ) : (
-                                <tr>
-                                  <td colSpan="4" className="px-3 py-2 text-center">
-                                    Tidak ada detail
-                                  </td>
-                                </tr>
-                              )}
-                            </tbody>
-                          </table>
-                        </td>
-                      </tr>
-                    )}
-                  </React.Fragment>
-                );
-              })
-            ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full table-auto border text-sm shadow bg-white">
+            <thead className="bg-indigo-100 text-left">
               <tr>
-                <td colSpan="5" className="px-3 py-2 text-center">Tidak ada data yang cocok.</td>
+                <th className="px-3 py-2 border"></th>
+                <th className="px-3 py-2 border">Nama</th>
+                <th className="px-3 py-2 border">Kelas</th>
+                <th className="px-3 py-2 border text-center">Jumlah Aksi</th>
+                <th className="px-3 py-2 border text-center">Total Poin</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filteredRekap.length > 0 ? (
+                filteredRekap.map((item) => {
+                  const key = item.nama + "-" + item.kelas;
+                  const detailAksi = detailData[key] || [];
+                  const filteredDetail = kategoriFilter ? detailAksi.filter((a) => (a.kategori || "Laporan") === kategoriFilter) : detailAksi;
+
+                  return (
+                    <React.Fragment key={key}>
+                      <tr className="hover:bg-indigo-50">
+                        <td className="px-3 py-2 border text-center">
+                          <button onClick={() => toggleExpand(key)} className={`px-3 py-1 rounded-full text-xs font-semibold transition duration-200 ${expanded === key ? "bg-red-100 text-red-600 hover:bg-red-200" : "bg-green-100 text-green-700 hover:bg-green-200"}`}>{expanded === key ? "⬇️" : "▶️"}</button>
+                        </td>
+                        <td className="px-3 py-2 border">{item.nama}</td>
+                        <td className="px-3 py-2 border">{item.kelas}</td>
+                        <td className="px-3 py-2 border text-center">{item.jumlahAksi}</td>
+                        <td className="px-3 py-2 border text-center">{item.totalPoin}</td>
+                      </tr>
+                      {expanded === key && (
+                        <tr>
+                          <td colSpan="5" className="bg-gray-100">
+                            <div className="overflow-x-auto">
+                              <table className="w-full table-auto">
+                                <thead className="bg-gray-200">
+                                  <tr>
+                                    <th className="px-3 py-2 border">Tanggal</th>
+                                    <th className="px-3 py-2 border">Kategori</th>
+                                    <th className="px-3 py-2 border">Aksi</th>
+                                    <th className="px-3 py-2 border">Poin</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {filteredDetail.length > 0 ? (
+                                    filteredDetail.map((detail, index) => (
+                                      <tr key={index}>
+                                        <td className="px-3 py-2 border">{detail.tanggal}</td>
+                                        <td className="px-3 py-2 border">{detail.kategori}</td>
+                                        <td className="px-3 py-2 border">{detail.aksi}</td>
+                                        <td className="px-3 py-2 border">{detail.poin}</td>
+                                      </tr>
+                                    ))
+                                  ) : (
+                                    <tr>
+                                      <td colSpan="4" className="px-3 py-2 text-center">Tidak ada detail</td>
+                                    </tr>
+                                  )}
+                                </tbody>
+                              </table>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td colSpan="5" className="px-3 py-2 text-center">Tidak ada data yang cocok.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </MainLayout>
   );
