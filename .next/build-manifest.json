@@ -27,6 +27,16 @@
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
+    "/agenda": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/agenda.js"
+    ],
+    "/galeri": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/galeri.js"
+    ],
     "/login": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",

@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from 'next/link';
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
@@ -6,6 +6,7 @@ export default function Navbar() {
   const router = useRouter();
   const [role, setRole] = useState(null);
   const [nama, setNama] = useState("");
+  const [isMounted, setIsMounted] = useState(false); // untuk hindari flicker
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -13,6 +14,7 @@ export default function Navbar() {
       const storedNama = localStorage.getItem("nama");
       setRole(storedRole);
       setNama(storedNama);
+      setIsMounted(true);
     }
   }, []);
 
@@ -21,7 +23,7 @@ export default function Navbar() {
     router.push("/login");
   };
 
-  const tabs = [
+  const baseTabs = [
     { href: "/jejak", label: "Jejak" },
     { href: "/budaya", label: "Budaya" },
     { href: "/lapor", label: "Lapor" },
@@ -29,9 +31,11 @@ export default function Navbar() {
     { href: "/galeri", label: "Galeri" },
   ];
 
-  if (role === "admin") {
-    tabs.push({ href: "/dashboard", label: "Dashboard" });
-  }
+  const tabs = role === "admin"
+    ? [...baseTabs, { href: "/dashboard", label: "Dashboard" }]
+    : baseTabs;
+
+  if (!isMounted) return null; // hindari render sebelum localStorage tersedia
 
   return (
     <nav className="bg-yellow-50 shadow-md px-6 py-3 flex justify-between items-center">

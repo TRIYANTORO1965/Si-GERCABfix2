@@ -1,16 +1,25 @@
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import MainLayout from "../components/MainLayout";
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
 export default function Dashboard() {
+  const router = useRouter();
   const [rekap, setRekap] = useState([]);
   const [detailData, setDetailData] = useState({});
   const [expanded, setExpanded] = useState(null);
   const [search, setSearch] = useState("");
   const [kelasFilter, setKelasFilter] = useState("");
   const [kategoriFilter, setKategoriFilter] = useState("");
+
+  useEffect(() => {
+    const login = JSON.parse(localStorage.getItem("loginUser"));
+    if (!login || login.role !== "admin") {
+      router.replace("/login");
+    }
+  }, [router]);
 
   useEffect(() => {
     const jejak = JSON.parse(localStorage.getItem("jejakHijau")) || [];
@@ -28,7 +37,11 @@ export default function Dashboard() {
       poin: item.poin || 5
     }));
 
-    const semuaData = [...jejak, ...budaya, ...laporan, ...galeriData];
+    const semuaData = [...jejak, ...budaya, ...laporan, ...galeriData].map(item => ({
+      ...item,
+      kategori: item.kategori || "Laporan" // fallback
+    }));
+
     const rekapMap = {};
     const detailMap = {};
 
@@ -95,7 +108,7 @@ export default function Dashboard() {
 
   return (
     <MainLayout>
-      <div className="bg-glass">
+      <div className="bg-white bg-opacity-70 backdrop-blur p-4 rounded shadow">
         <h2 className="text-xl font-semibold mb-4 text-indigo-700">Dashboard Rekap Semua Aksi Siswa</h2>
 
         {/* Top 10 */}
@@ -169,6 +182,7 @@ export default function Dashboard() {
           </button>
         </div>
 
+        {/* Tabel utama + detail */}
         <table className="w-full table-auto border text-sm shadow bg-white">
           <thead className="bg-indigo-100 text-left">
             <tr>
@@ -200,64 +214,46 @@ export default function Dashboard() {
                               : "bg-green-100 text-green-700 hover:bg-green-200"
                           }`}
                         >
-                          {expanded === key ? "Tutup" : "Detail"}
+                          {expanded === key ? "⬇️" : "▶️"}
                         </button>
                       </td>
                       <td className="px-3 py-2 border">{item.nama}</td>
                       <td className="px-3 py-2 border">{item.kelas}</td>
-                      <td className="px-3 py-2 border text-center">{filteredDetail.length}</td>
-                      <td className="px-3 py-2 border text-center font-semibold">
-                        {filteredDetail.reduce((sum, d) => sum + (d.poin || 0), 0)}
-                      </td>
+                      <td className="px-3 py-2 border text-center">{item.jumlahAksi}</td>
+                      <td className="px-3 py-2 border text-center">{item.totalPoin}</td>
                     </tr>
+
                     {expanded === key && (
-                      <tr className="bg-indigo-50">
-                        <td colSpan="5" className="px-3 py-2 border">
-                          <table className="w-full text-sm mb-2">
-                            <thead>
-                              <tr className="text-gray-700">
-                                <th className="text-left px-2 py-1">Tanggal</th>
-                                <th className="text-left px-2 py-1">Kategori</th>
-                                <th className="text-left px-2 py-1">Aksi / Laporan</th>
-                                <th className="text-left px-2 py-1">Lokasi</th>
-                                <th className="text-left px-2 py-1">Poin</th>
+                      <tr>
+                        <td colSpan="5" className="bg-gray-100">
+                          <table className="w-full table-auto">
+                            <thead className="bg-gray-200">
+                              <tr>
+                                <th className="px-3 py-2 border">Tanggal</th>
+                                <th className="px-3 py-2 border">Kategori</th>
+                                <th className="px-3 py-2 border">Aksi</th>
+                                <th className="px-3 py-2 border">Poin</th>
                               </tr>
                             </thead>
                             <tbody>
-                              {filteredDetail.map((aksi, idx) => (
-                                <tr key={idx}>
-                                  <td className="px-2 py-1">{aksi.tanggal || "-"}</td>
-                                  <td className="px-2 py-1">{aksi.kategori || "Laporan"}</td>
-                                  <td className="px-2 py-1">{aksi.aksi || aksi.laporan || aksi.deskripsi}</td>
-                                  <td className="px-2 py-1">{aksi.lokasi || "-"}</td>
-                                  <td className="px-2 py-1">{aksi.poin}</td>
+                              {filteredDetail.length > 0 ? (
+                                filteredDetail.map((detail, index) => (
+                                  <tr key={index}>
+                                    <td className="px-3 py-2 border">{detail.tanggal}</td>
+                                    <td className="px-3 py-2 border">{detail.kategori}</td>
+                                    <td className="px-3 py-2 border">{detail.aksi}</td>
+                                    <td className="px-3 py-2 border">{detail.poin}</td>
+                                  </tr>
+                                ))
+                              ) : (
+                                <tr>
+                                  <td colSpan="4" className="px-3 py-2 text-center">
+                                    Tidak ada detail
+                                  </td>
                                 </tr>
-                              ))}
+                              )}
                             </tbody>
                           </table>
-                          <div className="flex justify-end">
-                            <button
-                              onClick={() => {
-                                const doc = new jsPDF();
-                                doc.text(`Laporan Detail Aksi - ${item.nama}`, 14, 16);
-                                autoTable(doc, {
-                                  head: [["Tanggal", "Kategori", "Aksi / Laporan", "Lokasi", "Poin"]],
-                                  body: filteredDetail.map((d) => [
-                                    d.tanggal || "-",
-                                    d.kategori || "Laporan",
-                                    d.aksi || d.laporan || d.deskripsi,
-                                    d.lokasi || "-",
-                                    d.poin || 0,
-                                  ]),
-                                  startY: 20,
-                                });
-                                doc.save(`laporan_${item.nama.toLowerCase().replace(/\s+/g, "_")}.pdf`);
-                              }}
-                              className="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700"
-                            >
-                              Export Detail PDF
-                            </button>
-                          </div>
                         </td>
                       </tr>
                     )}
@@ -266,9 +262,7 @@ export default function Dashboard() {
               })
             ) : (
               <tr>
-                <td colSpan="5" className="px-3 py-4 text-center text-gray-500">
-                  Tidak ada data yang cocok.
-                </td>
+                <td colSpan="5" className="px-3 py-2 text-center">Tidak ada data yang cocok.</td>
               </tr>
             )}
           </tbody>
