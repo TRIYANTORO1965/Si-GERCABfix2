@@ -108,14 +108,14 @@ export default function Dashboard() {
 
   return (
     <MainLayout>
-      <div className="bg-white bg-opacity-70 backdrop-blur p-4 rounded shadow font-inter">
-        <h2 className="text-xl font-semibold mb-4 text-indigo-700">Dashboard Rekap Semua Aksi Siswa</h2>
+      <div className="bg-white bg-opacity-70 backdrop-blur p-4 rounded shadow font-inter max-w-full overflow-x-auto text-sm sm:text-base">
+        <h2 className="text-lg sm:text-xl font-semibold mb-4 text-indigo-700">Dashboard Rekap Semua Aksi Siswa</h2>
 
         {rekap.length > 0 && (
           <div className="mb-6">
-            <h3 className="text-lg font-semibold text-yellow-600 mb-2">🏆 Top 10 Siswa Berdasarkan Poin</h3>
+            <h3 className="text-base sm:text-lg font-semibold text-yellow-600 mb-2">🏆 Top 10 Siswa Berdasarkan Poin</h3>
             <div className="overflow-x-auto">
-              <table className="w-full md:w-2/3 table-auto text-sm border bg-white shadow rounded">
+              <table className="min-w-[600px] w-full table-auto text-sm border bg-white shadow rounded">
                 <thead className="bg-yellow-100">
                   <tr>
                     <th className="px-3 py-2 border">#</th>
@@ -140,14 +140,14 @@ export default function Dashboard() {
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
-          <input type="text" placeholder="🔍 Cari nama siswa..." className="border px-3 py-2 rounded w-full text-base" value={search} onChange={(e) => setSearch(e.target.value)} />
-          <select className="border px-3 py-2 rounded w-full text-base" value={kelasFilter} onChange={(e) => setKelasFilter(e.target.value)}>
+          <input type="text" placeholder="🔍 Cari nama siswa..." className="border px-3 py-2 rounded w-full text-sm sm:text-base" value={search} onChange={(e) => setSearch(e.target.value)} />
+          <select className="border px-3 py-2 rounded w-full text-sm sm:text-base" value={kelasFilter} onChange={(e) => setKelasFilter(e.target.value)}>
             <option value="">🎓 Semua Kelas</option>
             {Array.from(new Set(rekap.map((r) => r.kelas))).map((kelas, i) => (
               <option key={i} value={kelas}>{kelas}</option>
             ))}
           </select>
-          <select className="border px-3 py-2 rounded w-full text-base" value={kategoriFilter} onChange={(e) => setKategoriFilter(e.target.value)}>
+          <select className="border px-3 py-2 rounded w-full text-sm sm:text-base" value={kategoriFilter} onChange={(e) => setKategoriFilter(e.target.value)}>
             <option value="">🗂️ Semua Kategori</option>
             <option value="Jejak">Jejak</option>
             <option value="Budaya">Budaya</option>
@@ -162,7 +162,7 @@ export default function Dashboard() {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full table-auto border text-sm shadow bg-white">
+          <table className="min-w-[700px] w-full table-auto border text-sm shadow bg-white">
             <thead className="bg-indigo-100 text-left">
               <tr>
                 <th className="px-3 py-2 border"></th>
@@ -183,7 +183,7 @@ export default function Dashboard() {
                     <React.Fragment key={key}>
                       <tr className="hover:bg-indigo-50">
                         <td className="px-3 py-2 border text-center">
-                          <button onClick={() => toggleExpand(key)} className={`px-3 py-1 rounded-full text-xs font-semibold transition duration-200 ${expanded === key ? "bg-red-100 text-red-600 hover:bg-red-200" : "bg-green-100 text-green-700 hover:bg-green-200"}`}>{expanded === key ? "⬇️" : "▶️"}</button>
+                          <button onClick={() => toggleExpand(key)} className={`px-2 py-1 rounded-full text-xs font-semibold transition duration-200 ${expanded === key ? "bg-red-100 text-red-600 hover:bg-red-200" : "bg-green-100 text-green-700 hover:bg-green-200"}`}>{expanded === key ? "⬇️" : "▶️"}</button>
                         </td>
                         <td className="px-3 py-2 border">{item.nama}</td>
                         <td className="px-3 py-2 border">{item.kelas}</td>
